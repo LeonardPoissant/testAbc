@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import styled from "styled-components";
 
 type Ages = {
-  minAge: string;
-  maxAge: string;
+  minAge?: string;
+  maxAge?: string;
 };
 
-export const AgeFilter: React.FC = () => {
+export const AgeFilter: React.FC<Ages> = ({ minAge, maxAge }: Ages) => {
   const [, setMinAge] = useState<string>("");
   const [, setMaxAge] = useState<string>("");
   const handleMinAge = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,14 +22,20 @@ export const AgeFilter: React.FC = () => {
   };
 
   return (
-    <div>
+    <Wrapper>
       <h2>Users</h2>
-      min: <MinAge type="number" onChange={handleMinAge} />
-      max: <MaxAge type="number" onChange={handleMaxAge} />
+      <MinAge type="number" placeholder="min" onChange={handleMinAge} />
+      <MaxAge type="number" placeholder="max" onChange={handleMaxAge} />
       <button type="button">Filter by age</button>
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+`;
 
 const MinAge = styled.input``;
 

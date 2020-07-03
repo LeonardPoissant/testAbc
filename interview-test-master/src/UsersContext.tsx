@@ -1,19 +1,16 @@
-import React, { useState } from "react";
-import styled, { StyledFunction } from "styled-components";
+import React, { createContext, useState } from "react";
 
 const API_URL = "http://localhost:8099";
 
 interface Users {
-  firstName?: string;
-  lastName?: string;
-  age?: number;
+  user?: Array<string>;
 }
 
-export const Button: React.FC<Users> = ({
-  firstName,
-  lastName,
-  age,
-}: Users) => {
+export const UsersContext = createContext<Users>({
+  user: "Joshn",
+});
+
+const UserProvider = ({ children }) => {
   const [users, setUsers] = useState<Users[]>([]);
 
   const endPoints = [
@@ -36,17 +33,8 @@ export const Button: React.FC<Users> = ({
   };
 
   return (
-    <>
-      <GetUsers onClick={(e) => handleGetUsers(e)}>Retrieve Users</GetUsers>
-    </>
+    <UsersContext.Provider value={handleGetUsers}>
+      {children}
+    </UsersContext.Provider>
   );
 };
-
-const GetUsers = styled.button`
-  border-radius: 30px;
-  padding: 10px;
-  width: 100px;
-  background-color: green;
-  color: white;
-  font-size: 10px;
-`;

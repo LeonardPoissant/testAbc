@@ -1,14 +1,21 @@
 import React from "react";
 import styled from "styled-components";
+import image from "../public/sort-arrows.svg";
 
-export const Results = () => {
+interface UsersPropsType {
+  firstName?: string;
+  lastName?: string;
+  age?: number;
+}
+
+export const UsersList: React.FC<UsersPropsType> = (users) => {
   return (
     <Wrapper>
       <SearchBar placeholder="Search Users" />
       <Filters>
         <Name>
           NAME
-          <img src="public/sort-arrows.svg"></img>
+          <img src="src/public/sort-arrows.svg"></img>
         </Name>
         <Age>
           AGE

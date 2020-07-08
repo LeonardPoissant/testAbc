@@ -36,6 +36,7 @@ function createUsers(minAge, maxAge, limit) {
 
 server.get("/users/kids", async () => {
   const users = createUsers(0, 18, 15);
+  console.log(users);
   return { data: users };
 });
 

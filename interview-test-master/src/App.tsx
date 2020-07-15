@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { GetUsersComponent } from "./GetUsersComponent";
 import { UsersList } from "./UsersList";
 
+import image from "../public/sort-arrows.svg";
+
 const API_URL = "http://localhost:8099";
 
 interface UsersPropsType {
@@ -31,8 +33,8 @@ const App: React.FC<
   UsersPropsType & AgeFilterPropsType & NamePropsType
 > = () => {
   const [users, setUsers] = useState<UsersPropsType[]>([]);
-  const [, setMinAge] = useState<string>("");
-  const [, setMaxAge] = useState<string>("");
+  const [minAge, setMinAge] = useState<string>("");
+  const [maxAge, setMaxAge] = useState<string>("");
 
   const endPoints = [
     `${API_URL}/users/kids`,
@@ -62,97 +64,133 @@ const App: React.FC<
     setMaxAge(value);
   };
 
-  // const orderedUsers = users.map((usersAgecategories: NamePropsType) => {
-  //   if (usersAgecategories.data) {
-  //     usersAgecategories.data.name.sort(function (a: any, b: any) {
-  //       if (a.firstName < b.firstName) {
-  //         return -1;
-  //       }
+  const unStringedMinAge = parseInt(minAge);
+  const unStringedMaxAge = parseInt(maxAge);
 
-  //       if (a.firstName > b.firstName) {
-  //         return 1;
-  //       }
-  //       return 0;
-  //     });
+  console.log("MinAge", minAge);
+  console.log("MaxAge", typeof maxAge);
 
-  //     console.log(orderedUsers);
-  //   }
-  // });
+  const flattedenedUsers: any = [];
+
+  users.forEach((user) => {
+    if (user.data)
+      user.data.forEach((indivualUser: any) => {
+        flattedenedUsers.push(indivualUser);
+      });
+  });
+
+  const AlphabeticalUsers = flattedenedUsers.sort(function (a: any, b: any) {
+    if (a.name.firstName === b.name.firstName) {
+      return b.age - a.age;
+    }
+
+    return a.name.firstName > b.name.firstName ? 1 : -1;
+  });
+
+  const fullName = AlphabeticalUsers.map((user: any) => {
+    return user.name.firstName + " " + user.name.lastName;
+  });
 
   return (
     <>
       <div className="App" />
       <h1>Planned Test</h1>
-      <MainCard>
-        <RetrieveUsersCard>
-          <h2>Users</h2>
-          <MinAge type="number" placeholder="min" onChange={handleMinAge} />
-          <MaxAge type="number" placeholder="max" onChange={handleMaxAge} />
-          <Button onClick={(e) => handleGetUsers(e)}>Retrieve Users</Button>
-        </RetrieveUsersCard>
+      <Wrapper>
+        <h2>Users</h2>
+        <div>
+          <CardsWrapper>
+            <RetrieveUsersCard>
+              <MinAgeWrapper>
+                <MinAge
+                  type="number"
+                  placeholder="Min"
+                  onChange={handleMinAge}
+                />
+              </MinAgeWrapper>
+              <MaxAgeWrapper>
+                <MaxAge
+                  type="number"
+                  placeholder="Max"
+                  onChange={handleMaxAge}
+                />
+              </MaxAgeWrapper>
+              <Button onClick={(e) => handleGetUsers(e)}>Retrieve Users</Button>
+            </RetrieveUsersCard>
 
-        <UsersListCard>
-          <SearchBar placeholder="Search Users" />
-          <Filters>
-            <Name>
-              NAME
-              <img src="src/public/sort-arrows.svg"></img>
-            </Name>
-            <Age>
-              AGE
-              <img src="public/sort-arrows.svg"></img>
-            </Age>
-          </Filters>
-          {users.map((usersAgeCategories: NamePropsType) => {
-            if (usersAgeCategories.data)
-              return usersAgeCategories.data.map((user: NamePropsType) => {
-                const orderedUsers = Object.values(user.name).sort(function (
-                  a: any,
-                  b: any
-                ) {
-                  if (a.firstName < b.firstName) {
-                    return -1;
-                  }
-                  if (a.firstName > b.firstName) {
-                    return 1;
-                  }
-                  return 0;
-                });
+            <UsersListCard>
+              <UpperCard>
+                <SearchBar placeholder="Search Users" />
+              </UpperCard>
+              <Filters>
+                <Name>
+                  NAME
+                  <img src="src/Screen Shot 2020-07-13 at 5.39.20 PM.png"></img>
+                </Name>
+                <Age>
+                  AGE
+                  <img src="public/sort-arrows.svg"></img>
+                </Age>
+              </Filters>
 
-                console.log(orderedUsers);
-
-                return (
-                  <UserDisplay>
-                    <input type="checkbox" />
-                    <div>
-                      {user.name.firstName} {user.name.lastName}
-                    </div>
-                    <div>{user.age}</div>
-                  </UserDisplay>
-                );
-              });
-          })}
-        </UsersListCard>
-      </MainCard>
+              {AlphabeticalUsers.map((user: NamePropsType) => {
+                if (
+                  user.age >= unStringedMinAge &&
+                  user.age <= unStringedMaxAge
+                )
+                  return (
+                    <UserDisplay>
+                      <Input type="checkbox" />
+                      <UserFullName>
+                        {user.name.firstName} {user.name.lastName}
+                      </UserFullName>
+                      <UserAge>{user.age}</UserAge>
+                    </UserDisplay>
+                  );
+              })}
+            </UsersListCard>
+          </CardsWrapper>
+        </div>
+      </Wrapper>
     </>
   );
 };
 
-const MainCard = styled.div`
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+`;
+
+const CardsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-around;
 `;
 
 const RetrieveUsersCard = styled.div`
-  border-radius: 10px;
+  border-radius: 5px;
   border-style: solid;
-  border-color: black;
+  border-color: #888888;
+  border-width: 1px;
+  box-shadow: 5px 10px 10px #888888;
+  max-height: 150px;
+  min-height: 150px;
+  width: 150px;
 `;
 
-const MinAge = styled.input``;
+const MinAgeWrapper = styled.div``;
 
-const MaxAge = styled.input``;
+const MaxAgeWrapper = styled.div``;
+
+const MinAge = styled.input`
+  width: 75%;
+  margin: 5%;
+`;
+
+const MaxAge = styled.input`
+  width: 75%;
+  margin: 5%;
+`;
 
 const Button = styled.button`
   border-radius: 30px;
@@ -166,27 +204,64 @@ const Button = styled.button`
 const UsersListCard = styled.div`
   display: flex;
   flex-direction: column;
-  border-radius: 10px;
+  border-radius: 5px;
+  width: 400px;
+  max-width: 400px;
+  margin-right: 200px;
   border-style: solid;
-  border-color: black;
+  border-width: 1px;
+  box-shadow: 5px 10px 10px #888888;
+  border-color: #888888;
 `;
 
-const SearchBar = styled.input``;
+const UpperCard = styled.div`
+  padding: 20px;
+  border-bottom-style: solid;
+  border-color: #888888;
+  border-bottom-width: 1px;
+`;
+
+const SearchBar = styled.input`
+  display: flex;
+  justify-content: center;
+  border-radius: 5px;
+  border-width: 1px;
+  border-color: #888888;
+  width: 100%;
+`;
 
 const UserDisplay = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+`;
+
+const Input = styled.input`
+  width: 10%;
+`;
+
+const UserFullName = styled.div`
+  flex-direction: column;
+  width: 45%;
+`;
+
+const UserAge = styled.div`
+  flex-direction: column;
+  width: 33%;
 `;
 
 const Filters = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
 `;
 
-const Name = styled.div``;
+const Name = styled.div`
+  width: 20%;
+`;
 
-const Age = styled.div``;
+const Age = styled.div`
+  width: 20%;
+`;
 
 const Svg = styled.svg`
   color: black;

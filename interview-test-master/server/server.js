@@ -34,18 +34,25 @@ function createUsers(minAge, maxAge, limit) {
   return users;
 }
 
-server.get("/users/kids", async () => {
+server.get("/users/kids/:minAge/:maxAge", async () => {
+  // const { minAge } = req.params;
+  // console.log("MINAGE*******", minAge, maxAge);
+  // console.log("sdf********");
   const users = createUsers(0, 18, 15);
-  console.log(users);
+
   return { data: users };
 });
 
-server.get("/users/adults", async () => {
+server.get("/users/adults/:minAge/:maxAge", async () => {
+  // const { minAge } = req.params;
+  // const { maxAge } = req.params;
   const users = createUsers(19, 60, 15);
   return { data: users };
 });
 
-server.get("/users/seniors", async () => {
+server.get("/users/seniors/:minAge/:maxAge", async () => {
+  // const { minAge } = req.params;
+  // const { maxAge } = req.params;
   const users = createUsers(61, 100, 15);
   return { data: users };
 });

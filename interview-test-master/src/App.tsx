@@ -4,48 +4,73 @@ import styled from "styled-components";
 import { GetUsersComponent } from "./GetUsersComponent";
 import { UsersList } from "./UsersList";
 
-import image from "../public/sort-arrows.svg";
+import arrows from "./Assets/sort-arrows.svg";
+import logo from "./Assets/logo.svg";
 
 const API_URL = "http://localhost:8099";
 
 interface UsersPropsType {
-  age?: number;
-  usersAgeCategories?: [];
-  data?: [];
-  user?: {};
-  name?: {};
-  orderedUsers?: [];
+  age: number;
+  usersAgeCategories: [];
+  data: [];
+  user: {};
+  name: {};
+  orderedUsers: [];
   [key: string]: any;
 }
 
 interface NamePropsType {
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   [key: string]: any;
 }
 
 interface AgeFilterPropsType {
-  minAge?: string;
-  maxAge?: string;
+  minAge: string;
+  maxAge: string;
 }
 
-const App: React.FC<
-  UsersPropsType & AgeFilterPropsType & NamePropsType
-> = () => {
+interface UrlPropsTypes {
+  kids: string;
+  adults: string;
+  seniors: string;
+}
+
+const App = () => {
   const [users, setUsers] = useState<UsersPropsType[]>([]);
   const [minAge, setMinAge] = useState<string>("");
   const [maxAge, setMaxAge] = useState<string>("");
+  const numMinAge: number = parseInt(minAge);
+  const numMaxAge: number = parseInt(maxAge);
 
-  const endPoints = [
-    `${API_URL}/users/kids`,
-    `${API_URL}/users/adults`,
-    `${API_URL}/users/seniors`,
-  ];
-  const requests = endPoints.map((endPoint) => fetch(endPoint));
+  const kids = `${API_URL}/users/kids/${minAge}/${maxAge}`;
+  const adults = `${API_URL}/users/adults/${minAge}/${maxAge}`;
+  const seniors = `${API_URL}/users/seniors/${minAge}/${maxAge}`;
+
+  let endPoints = [kids, adults, seniors];
+
+  const handleEndPoints = () => {
+    if (numMinAge === 0 && numMaxAge <= 18) {
+      return (endPoints = [kids]);
+    } else if (numMinAge >= 19 && numMaxAge <= 60) {
+      return (endPoints = [adults]);
+    } else if (numMinAge >= 61 && numMaxAge <= 100) {
+      return (endPoints = [seniors]);
+    } else if (numMinAge === 0 && numMaxAge <= 60) {
+      return (endPoints = [kids, adults]);
+    } else if (numMinAge >= 19 && numMaxAge <= 100) {
+      return (endPoints = [adults, seniors]);
+    } else if (numMinAge === 0 && numMaxAge <= 100) {
+      return endPoints;
+    }
+  };
 
   const handleGetUsers = (e: React.MouseEvent<HTMLButtonElement>) => {
+    handleEndPoints();
+    const requests = endPoints.map((endPoint) => fetch(endPoint));
+    console.log(requests);
     Promise.all(requests)
-      .then((responses) => Promise.all(responses.map((r) => r.json())))
+      .then((responses) => Promise.all(responses.map((r: any) => r.json())))
       .then((responses) => {
         setUsers(responses);
       });
@@ -64,12 +89,6 @@ const App: React.FC<
     setMaxAge(value);
   };
 
-  const unStringedMinAge = parseInt(minAge);
-  const unStringedMaxAge = parseInt(maxAge);
-
-  console.log("MinAge", minAge);
-  console.log("MaxAge", typeof maxAge);
-
   const flattedenedUsers: any = [];
 
   users.forEach((user) => {
@@ -87,13 +106,10 @@ const App: React.FC<
     return a.name.firstName > b.name.firstName ? 1 : -1;
   });
 
-  const fullName = AlphabeticalUsers.map((user: any) => {
-    return user.name.firstName + " " + user.name.lastName;
-  });
-
   return (
     <>
       <div className="App" />
+      <img src={logo}></img>
       <h1>Planned Test</h1>
       <Wrapper>
         <h2>Users</h2>
@@ -124,19 +140,16 @@ const App: React.FC<
               <Filters>
                 <Name>
                   NAME
-                  <img src="src/Screen Shot 2020-07-13 at 5.39.20 PM.png"></img>
+                  <img src={arrows}></img>
                 </Name>
                 <Age>
                   AGE
-                  <img src="public/sort-arrows.svg"></img>
+                  <img src={arrows}></img>
                 </Age>
               </Filters>
 
               {AlphabeticalUsers.map((user: NamePropsType) => {
-                if (
-                  user.age >= unStringedMinAge &&
-                  user.age <= unStringedMaxAge
-                )
+                if (user.age >= numMinAge && user.age <= numMaxAge)
                   return (
                     <UserDisplay>
                       <Input type="checkbox" />

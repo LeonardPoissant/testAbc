@@ -1,60 +1,18 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-// const API_URL = "http://localhost:8099";
-
-interface UsersPropsType {
-  firstName?: string;
-  lastName?: string;
-  age?: number;
-}
-// interface AgeFilterPropsType {
-//   minAge?: string;
-//   maxAge?: string;
-// }
-
-export const GetUsersComponent: React.FC<UsersPropsType> = () => {
-  // const [users, setUsers] = useState<UsersPropsType[]>([]);
-  // const [, setMinAge] = useState<string>("");
-  // const [, setMaxAge] = useState<string>("");
-
-  // const endPoints = [
-  //   `${API_URL}/users/kids`,
-  //   `${API_URL}/users/adults`,
-  //   `${API_URL}/users/seniors`,
-  // ];
-  // const requests = endPoints.map((endPoint) => fetch(endPoint));
-
-  // const handleGetUsers = (e: React.MouseEvent<HTMLButtonElement>) => {
-  //   Promise.all(requests)
-  //     .then((responses) => Promise.all(responses.map((r) => r.json())))
-  //     .then((responses) => {
-  //       console.log(responses);
-  //       setUsers(responses);
-  //       console.log("USERS", users);
-  //     });
-  //   console.log("USERS", users);
-  // };
-
-  // const handleMinAge = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   e.preventDefault();
-  //   const { value } = e.target;
-  //   setMinAge(value);
-  // };
-  // const handleMaxAge = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   e.preventDefault();
-  //   const { value } = e.target;
-
-  //   setMaxAge(value);
-  // };
-
+export const GetUsersComponent: React.FC = () => {
   return (
-    <Wrapper className="COMPONENT">
-      <h2>Users</h2>
-      {/* <MinAge type="number" placeholder="min" onChange={handleMinAge} />
-      <MaxAge type="number" placeholder="max" onChange={handleMaxAge} />
-      <Button onClick={(e) => handleGetUsers(e)}>Retrieve Users</Button> */}
-    </Wrapper>
+    <div></div>
+    // <RetrieveUsersCard>
+    //   <MinAgeWrapper>
+    //     <MinAge type="number" placeholder="Min" onChange={handleMinAge} />
+    //   </MinAgeWrapper>
+    //   <MaxAgeWrapper>
+    //     <MaxAge type="number" placeholder="Max" onChange={handleMaxAge} />
+    //   </MaxAgeWrapper>
+    //   <Button onClick={(e) => handleGetUsers(e)}>Retrieve Users</Button>
+    // </RetrieveUsersCard>
   );
 };
 
@@ -64,9 +22,30 @@ const Wrapper = styled.div`
   border-color: black;
 `;
 
-const MinAge = styled.input``;
+const RetrieveUsersCard = styled.div`
+  border-radius: 5px;
+  border-style: solid;
+  border-color: #888888;
+  border-width: 1px;
+  box-shadow: 5px 10px 10px #888888;
+  max-height: 150px;
+  min-height: 150px;
+  width: 150px;
+`;
 
-const MaxAge = styled.input``;
+const MinAgeWrapper = styled.div``;
+
+const MaxAgeWrapper = styled.div``;
+
+const MinAge = styled.input`
+  width: 75%;
+  margin: 5%;
+`;
+
+const MaxAge = styled.input`
+  width: 75%;
+  margin: 5%;
+`;
 
 const Button = styled.button`
   border-radius: 30px;

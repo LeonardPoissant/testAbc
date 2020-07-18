@@ -30,10 +30,10 @@ interface AgeFilterPropsType {
   maxAge: string;
 }
 
-interface UrlPropsTypes {
+interface Url {
   kids: string;
   adults: string;
-  seniors: string;
+  senior: string;
 }
 
 const App = () => {
@@ -47,9 +47,9 @@ const App = () => {
   const adults = `${API_URL}/users/adults/${minAge}/${maxAge}`;
   const seniors = `${API_URL}/users/seniors/${minAge}/${maxAge}`;
 
-  let endPoints = [kids, adults, seniors];
+  let endPoints: Array<string> = [kids, adults, seniors];
 
-  const handleEndPoints = () => {
+  const handleEndPoints = (): string[] | undefined => {
     if (numMinAge === 0 && numMaxAge <= 18) {
       return (endPoints = [kids]);
     } else if (numMinAge >= 19 && numMaxAge <= 60) {
@@ -60,7 +60,10 @@ const App = () => {
       return (endPoints = [kids, adults]);
     } else if (numMinAge >= 19 && numMaxAge <= 100) {
       return (endPoints = [adults, seniors]);
-    } else if (numMinAge === 0 && numMaxAge <= 100) {
+    } else if (
+      (numMinAge === 0 && numMaxAge <= 100) ||
+      (minAge.length === 0 && maxAge.length === 0)
+    ) {
       return endPoints;
     }
   };
@@ -93,12 +96,12 @@ const App = () => {
 
   users.forEach((user) => {
     if (user.data)
-      user.data.forEach((indivualUser: any) => {
+      user.data.forEach((indivualUser) => {
         flattedenedUsers.push(indivualUser);
       });
   });
 
-  const AlphabeticalUsers = flattedenedUsers.sort(function (a: any, b: any) {
+  const orderedUsers = flattedenedUsers.sort(function (a: any, b: any) {
     if (a.name.firstName === b.name.firstName) {
       return b.age - a.age;
     }
@@ -148,17 +151,16 @@ const App = () => {
                 </Age>
               </Filters>
 
-              {AlphabeticalUsers.map((user: NamePropsType) => {
-                if (user.age >= numMinAge && user.age <= numMaxAge)
-                  return (
-                    <UserDisplay>
-                      <Input type="checkbox" />
-                      <UserFullName>
-                        {user.name.firstName} {user.name.lastName}
-                      </UserFullName>
-                      <UserAge>{user.age}</UserAge>
-                    </UserDisplay>
-                  );
+              {orderedUsers.map((user: NamePropsType) => {
+                return (
+                  <UserDisplay>
+                    <Input type="checkbox" />
+                    <UserFullName>
+                      {user.name.firstName} {user.name.lastName}
+                    </UserFullName>
+                    <UserAge>{user.age}</UserAge>
+                  </UserDisplay>
+                );
               })}
             </UsersListCard>
           </CardsWrapper>
